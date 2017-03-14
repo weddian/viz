@@ -1,0 +1,17 @@
+{
+  "name": "weddian-viz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^2.4.0",
+    "d3-scale-chromatic": "^1.1.0",
+    "mapbox-gl": "^0.32.1",
+    "swiper": "^3.4.1"
+  }
+}

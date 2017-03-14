@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="../node_modules/swiper/dist/css/swiper.css" rel="stylesheet">
+    <script src="../node_modules/swiper/dist/js/swiper.js"></script>
+    <script src="../node_modules/d3-color/build/d3-color.js"></script>
+    <script src="../node_modules/d3-interpolate/build/d3-interpolate.js"></script>
+    <script src="../node_modules/d3-scale-chromatic/build/d3-scale-chromatic.js"></script>
+    <script src="../node_modules/mapbox-gl/dist/mapbox-gl-dev.js"></script>
+    <link href="../node_modules/mapbox-gl/dist/mapbox-gl.css" rel="stylesheet"/>
+    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="weddingsPerMonth.js"></script>
+    <script src="highlightLocations.js"></script>
+    <style type="text/css">
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .fullscreen {
+            width: 100vw;
+            height: 88vh;
+        }
+
+        .swiper-slide {
+            transition-duration: 1000ms !important;
+            padding: 2rem 0;
+        }
+
+        .full-space {
+            height: 100%;
+            width: 100%;
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flex-vertical {
+            flex-direction: column;
+        }
+
+        .flex-auto {
+            flex: 1 1 auto;
+        }
+
+        .transition {
+            transition: all 1000ms;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 1rem;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        footer img {
+            width: 50px;
+        }
+
+        .claim {
+            font-size: 1.25rem;
+            padding-left: 1rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .invisible {
+            opacity: 0;
+        }
+
+        .wedding-dates {
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        .wedding-dates li {
+            padding: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .wedding-dates li span,
+        .wedding-dates li small {
+            padding-left: 0.5rem;
+        }
+
+        .map-overlay-container {
+            position: absolute;
+            width: 25%;
+            top: 0;
+            left: 0;
+            padding: 10px;
+            z-index: 1;
+        }
+
+        .map-overlay {
+            background-color: #fff;
+            border-radius: 3px;
+            padding: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
+        }
+
+        .map-overlay h2,
+        .map-overlay p {
+            margin: 0 0 10px;
+        }
+    </style>
+</head>
+<body>
+<footer>
+    <div>
+        <img src="weddian-logo.png">
+    </div>
+    <div class="claim">
+        Weddian<br>
+        <small>Wir lieben Hochzeiten</small>
+    </div>
+</footer>
+<div class="swiper-container fullscreen">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+        <!-- Slides -->
+        <div class="swiper-slide flex-container text-center">
+            <h1>Hochzeiten 2017<br/>im Weddian Hochzeitsplaner</h1>
+        </div>
+        <div class="swiper-slide flex-container flex-vertical">
+            <div style="flex: 0 0 15%" class="flex-container">
+                <h2>In welchem Zeitraum wird geheiratet?</h2>
+            </div>
+            <div class="flex-auto">
+                <canvas class="perMonthChart transition invisible" width="800" height="450"></canvas>
+            </div>
+            <div style="flex: 1 1 15%" class="transition invisible perMonth-conclusion">
+                <h3>nur 2% aller Brautpaare heiraten im Winter</h3>
+            </div>
+        </div>
+        <div class="swiper-slide flex-container flex-vertical">
+            <div style="flex: 0 0 20%" class="flex-container">
+                <h2>Welche Termine sind besonders beliebt?</h2>
+            </div>
+            <div class="flex-auto">
+                <ol class="wedding-dates">
+                    <li class="invisible transition"><span>Fr., 0<strong>7</strong>.0<strong>7</strong>.201<strong>7</strong>
+                        <br><small>5%</small>
+                    </span></li>
+                    <li class="invisible transition"><span>Sa., 01.0<strong>7</strong>.201<strong>7</strong>
+                        <br><small>5%</small>
+                    </span></li>
+                    <li class="invisible transition"><span>Sa., 1<strong>7</strong>.06.201<strong>7</strong>
+                        <br><small>4%</small>
+                    </span></li>
+                    <li class="invisible transition"><span>Sa., 1<strong>9</strong>.0<strong>8</strong>.201<strong>7</strong>
+                        <br><small>3%</small>
+                    </span></li>
+                    <li class="invisible transition"><span>Sa., 10.06.2017
+                        <br><small>3%</small>
+                    </span></li>
+                </ol>
+            </div>
+            <div style="flex: 1 1 15%" class="transition invisible wedding-dates-conclusion">
+                <h3>Die Brautpaare lieben leicht zu merkende Termine</h3>
+            </div>
+        </div>
+        <div class="swiper-slide flex-container flex-vertical">
+            <div style="flex: 0 0 15%" class="flex-container">
+                <h2 style="margin: 0;">Wo heiraten besonders viele?</h2>
+            </div>
+            <div class="flex-auto"
+                 style="width: 100%;position: relative;display: flex; flex-direction: column;padding-bottom:3rem;">
+                <div id="map" class="flex-auto transition invisible" style="width: 100%;"></div>
+                <div class='map-overlay-container'>
+                    <div class='map-overlay'>
+                        <h2 id='location-title'></h2>
+                        <p id='location-description'></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var renderPerMonthChart = function () {
+        var monthMax = 0;
+        weddingsPerMonth.months.forEach(function (month) {
+            if (month.count > monthMax) monthMax = month.count
+        });
+        weddingsPerMonth.months.forEach(function (month) {
+            month.share = Math.round(month.count / monthMax * 10000) / 100;
+            month.percentage = Math.round(month.count / weddingsPerMonth.total * 10000) / 100;
+        });
+
+        var perMonthChartData = {
+            labels: weddingsPerMonth.months.map(function (month) {
+                return month.label;
+            }),
+            datasets: [
+                {
+                    label: "Monate",
+                    backgroundColor: weddingsPerMonth.months.map(function (month) {
+                        return d3.interpolateRdPu(month.share / 100);
+                    }),
+                    data: [],
+                    borderWidth: 0
+                }
+            ]
+        };
+
+        var perMonthChartElement = document.querySelector('.perMonthChart');
+        var perMonthChart = new Chart(perMonthChartElement, {
+            type: 'bar',
+            data: perMonthChartData,
+            options: {
+                scales: {
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            labelString: '%',
+                            display: true
+                        },
+                        ticks: {
+                            max: Math.round(monthMax / weddingsPerMonth.total * 100),
+                            min: 0
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            fontSize: 16
+                        }
+                    }]
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+        perMonthChartElement.style.opacity = 1;
+
+        setTimeout(function () {
+            var maxIndex = -1;
+            var interval = setInterval(function () {
+                maxIndex++;
+                perMonthChartData.datasets[0].data = weddingsPerMonth.months
+                    .filter(function (month, index) {
+                        return index <= maxIndex;
+                    })
+                    .map(function (month) {
+                        return month.percentage;
+                    });
+                perMonthChart.update();
+                if (maxIndex + 1 >= weddingsPerMonth.months.length) clearInterval(interval);
+            }, 300);
+        }, 300);
+
+        setTimeout(function () {
+            document.querySelector('.perMonth-conclusion').style.opacity = 1;
+        }, 5000);
+    }
+</script>
+<script>
+    var renderPerDateChart = function () {
+        var maxIndex = -1;
+        var liElements = document.querySelectorAll('.wedding-dates li');
+        var interval = setInterval(function () {
+            maxIndex++;
+            liElements[maxIndex].style.opacity = 1;
+            if (maxIndex + 1 >= liElements.length) clearInterval(interval);
+        }, 600);
+
+        setTimeout(function () {
+            document.querySelector('.wedding-dates-conclusion').style.opacity = 1;
+        }, 4500);
+    }
+</script>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY29kZWZvcmhlaWxicm9ubiIsImEiOiJaVW1RaEhzIn0.dTT9PWOqjBbzpw7S--GnAA';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/satellite-v9',
+        center: [9.9167, 51.3167],
+        zoom: 5
+    });
+
+    var renderMap = function () {
+        var circleSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        map.addSource("locations", {
+            type: "geojson",
+            data: "weddingLocations.geojson"
+        });
+
+        map.addLayer({
+            "id": "highlight",
+            "type": "symbol",
+            "source": "locations",
+            "layout": {
+                "icon-image": "{icon}-15"
+            },
+            "paint": {
+                "icon-opacity": 1
+            },
+            "filter": ["==", "id", ""]
+        });
+
+        circleSizes.forEach(function (circleSize) {
+            map.addLayer({
+                "id": "cluster-locations-" + circleSize,
+                "type": "circle",
+                "source": "locations",
+                "paint": {
+                    "circle-opacity": 0,
+                    "circle-color": '#f7cbe1',
+                    "circle-radius": 1 + ((circleSize / 15) * 10)
+                },
+                "filter": ["==", "count", circleSize]
+            });
+            setTimeout(function () {
+                map.setPaintProperty('cluster-locations-' + circleSize, 'circle-opacity', 0.8);
+            }, 300 + circleSize * 150);
+        });
+
+        var highlightId = function (id) {
+            map.setFilter('highlight', ["==", "id", id]);
+        };
+
+        var title = document.getElementById('location-title');
+        var description = document.getElementById('location-description');
+        var playback = function (index) {
+            var location = locations[index];
+            title.textContent = location.name;
+            description.textContent = location.description ? location.description : '';
+
+            highlightId(location.id);
+
+            map.flyTo(location.camera);
+
+            map.once('moveend', function () {
+                if (index + 1 < locations.length) {
+                    setTimeout(function () {
+                        playback(index + 1);
+                    }, 3000);
+                }
+            });
+        };
+        setTimeout(function () {
+            playback(0);
+        }, 4000);
+
+        setTimeout(function () {
+            document.getElementById('map').style.opacity = 1;
+        }, 300);
+    };
+</script>
+<script>
+    function ready(fn) {
+        if (document.readyState != 'loading') {
+            fn();
+        } else {
+            document.addEventListener('DOMContentLoaded', fn);
+        }
+    }
+
+    var start = function () {
+        var slideshow = new Swiper('.swiper-container', {
+            initialSlide: 0,
+            effect: 'slide'
+        });
+//        map.on('load', renderMap);
+
+
+        var timing = [
+            {
+                slide: 1,
+                delay: 3000
+            },
+            {
+                delay: 1000,
+                fn: renderPerMonthChart
+            },
+            {
+                slide: 2,
+                delay: 8000
+            },
+            {
+                delay: 1000,
+                fn: renderPerDateChart
+            },
+            {
+                slide: 3,
+                delay: 8000
+            },
+            {
+                delay: 1000,
+                fn: renderMap
+            }
+        ];
+        var delaySum = 0;
+        timing.forEach(function (entry) {
+            delaySum += entry.delay;
+            setTimeout(function () {
+                if (entry.slide) slideshow.slideTo(entry.slide, 1000);
+                if (entry.fn) entry.fn();
+            }, delaySum);
+        });
+    };
+
+    ready(start);
+</script>
+</body>
+</html>
