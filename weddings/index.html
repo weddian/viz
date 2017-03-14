@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
     <link href="../node_modules/swiper/dist/css/swiper.css" rel="stylesheet">
     <script src="../node_modules/swiper/dist/js/swiper.js"></script>
     <script src="../node_modules/d3-color/build/d3-color.js"></script>
@@ -12,6 +12,7 @@
     <script src="../node_modules/mapbox-gl/dist/mapbox-gl-dev.js"></script>
     <link href="../node_modules/mapbox-gl/dist/mapbox-gl.css" rel="stylesheet"/>
     <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="weddingsPerMonth.js"></script>
     <script src="weddingDates.js"></script>
     <script src="highlightLocations.js"></script>
     <style type="text/css">
@@ -152,21 +153,6 @@
             </div>
             <div class="flex-auto">
                 <ol class="wedding-dates">
-                    <li class="invisible transition"><span>Fr., 0<strong>7</strong>.0<strong>7</strong>.201<strong>7</strong>
-                        <br><small>~18.840 Hochzeiten</small>
-                    </span></li>
-                    <li class="invisible transition"><span>Sa., 01.0<strong>7</strong>.201<strong>7</strong>
-                        <br><small>~18.280 Hochzeiten</small>
-                    </span></li>
-                    <li class="invisible transition"><span>Sa., 1<strong>7</strong>.06.201<strong>7</strong>
-                        <br><small>4%</small>
-                    </span></li>
-                    <li class="invisible transition"><span>Sa., 1<strong>9</strong>.0<strong>8</strong>.201<strong>7</strong>
-                        <br><small>3%</small>
-                    </span></li>
-                    <li class="invisible transition"><span>Sa., 10.06.2017
-                        <br><small>3%</small>
-                    </span></li>
                 </ol>
             </div>
             <div style="flex: 1 1 15%" class="transition invisible wedding-dates-conclusion">
@@ -270,8 +256,19 @@
 </script>
 <script>
     var renderPerDateChart = function () {
-        var maxIndex = -1;
+
+        var ol = document.querySelector('ol.wedding-dates');
+        var content = "";
+
+        weddingDates.dates.forEach(function (element) {
+            var totalWeddings = Math.round(((element.count / weddingDates.total) * 400000) / 100) * 100;
+            content += "<li class='invisible transition'><span>"+element.label+"<br><small>~"+totalWeddings+" Hochzeiten</small></span></li>";
+        });
+
+        ol.innerHTML = content;
+
         var liElements = document.querySelectorAll('.wedding-dates li');
+        var maxIndex = -1;
         var interval = setInterval(function () {
             maxIndex++;
             liElements[maxIndex].style.opacity = 1;
@@ -379,22 +376,22 @@
 
 
         var timing = [
-            {
+            /*{
                 slide: 1,
                 delay: 3000
             },
             {
                 delay: 1000,
                 fn: renderPerMonthChart
-            },
+            },*/
             {
                 slide: 2,
-                delay: 8000
+                delay: 1000
             },
             {
                 delay: 1000,
                 fn: renderPerDateChart
-            },
+            }/*,
             {
                 slide: 3,
                 delay: 8000
@@ -402,7 +399,7 @@
             {
                 delay: 1000,
                 fn: renderMap
-            }
+            }*/
         ];
         var delaySum = 0;
         timing.forEach(function (entry) {
