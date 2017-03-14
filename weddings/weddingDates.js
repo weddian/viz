@@ -2,7 +2,7 @@ var weddingDates = {
     "total": 5518,
     "dates": [
         {
-            "label": "Fr., 0<strong>7</strong>.07.2017",
+            "label": "Fr., 07.07.2017",
             "count": 260
         },
         {
