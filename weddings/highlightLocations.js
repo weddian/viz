@@ -20,20 +20,5 @@ var locations = [
             zoom: 17,
             pitch: 50
         }
-    },
-    {
-        "type": "Feature",
-        "properties": {
-            "id": "ChIJq0m75Dt-pkcRvdv0QetiHkI",
-            "name": "Hotel Schloss Teutschenthal, Carl-Wentzel-Straße 30, 06179 Teutschenthal, Deutschland",
-            "count": 4
-        },
-        "geometry": {
-            "type": "Point",
-            "coordinates": [
-                11.7900713,
-                51.4425554
-            ]
-        }
     }
 ];

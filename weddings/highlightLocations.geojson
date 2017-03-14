@@ -1,0 +1,125 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ChIJUebXD8XICUcRATzsUppiavE",
+        "name": "Schloss Albrechtsberg, Bautzner Str. 130, 01099 Dresden, Deutschland",
+        "count": 7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.794220099999999,
+          51.0648341
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ChIJ8xKz2HvJl0cRePaNU7NGyKw",
+        "name": "Hotel Darstein, Zum Strandhotel 10, 67122 Altrip, Deutschland",
+        "count": 5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.465518,
+          49.4256631
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ChIJq0m75Dt-pkcRvdv0QetiHkI",
+        "name": "Hotel Schloss Teutschenthal, Carl-Wentzel-Straße 30, 06179 Teutschenthal, Deutschland",
+        "count": 4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.7900713,
+          51.4425554
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ChIJPRKeqmcHqUcRX97RL5eeO5s",
+        "name": "Schloss Oranienburg, 16515 Oranienburg, Schloßpl. 1, 16515 Oranienburg, Deutschland",
+        "count": 4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.236820000000002,
+          52.754737
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ChIJ685n14d3nkcRGMd8SxdnS50",
+        "name": "Insel Mühle Hotel Restaurant Biergarten, Von-Kahr-Straße 87, 80999 München, Deutschland",
+        "count": 4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.4622425,
+          48.1765276
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ChIJQ4CpCOWOuEcR-bMUoNalM90",
+        "name": "Landhotel Voshövel, Am Voshövel 1, 46514 Schermbeck, Deutschland",
+        "count": 4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.719501900000001,
+          51.7159245
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ChIJF_5oBE85pEcRtW2ZxdocyzQ",
+        "name": "Schloss Beichlingen, Str. des Friedens 70, 99625 Beichlingen, Deutschland",
+        "count": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.259656000000001,
+          51.2350221
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ChIJax4Xb0J-rkcR8Yh7CR3eCyg",
+        "name": "Jagdschloss Friedrichsmoor, Schloßallee 10, 19306 Neustadt-Glewe, Deutschland",
+        "count": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.571072,
+          53.459284499999995
+        ]
+      }
+    }
+  ]
+}
