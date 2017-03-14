@@ -261,10 +261,14 @@
         var content = "";
 
         weddingDates.dates.forEach(function (element) {
+            var timex = element.label.replace(/Fr/gi, "<strong>Freitag</strong>")
+            timex = timex.replace(/Sa/gi, "<strong>Samstag</strong>")
             var totalWeddings = Math.round(((element.count / weddingDates.total) * 400000) / 100) * 100;
-            content += "<li class='invisible transition'><span>"+element.label+"<br><small>~"+totalWeddings+" Hochzeiten</small></span></li>";
-        });
+            var form =new Intl.NumberFormat("de-DE").format(totalWeddings);
+            var formdate = timex.replace(/7/gi, "<strong>7</strong>")
+            content += "<li class='invisible transition'><span>"+formdate+"<br><small>~<strong>"+form+"</strong> Hochzeiten</small></span></li>"
 
+        });
         ol.innerHTML = content;
 
         var liElements = document.querySelectorAll('.wedding-dates li');
