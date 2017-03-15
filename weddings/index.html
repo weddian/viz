@@ -20,7 +20,13 @@
             padding: 0;
             font-family: 'Open Sans', sans-serif;
         }
-
+        .marker {
+            display: block;
+            border: none;
+            cursor: pointer;
+            background-size: contain;
+            padding: 0;
+        }
         .fullscreen {
             width: 100vw;
             height: 88vh;
@@ -295,8 +301,8 @@
     var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v9',
-        center: [9.9167, 51.3167],
-        zoom: 5
+        center: [9.9167, 53.3167],
+        zoom: 6
     });
 
     var renderMap = function () {
@@ -306,17 +312,57 @@
             data: "highlightLocations.geojson"
         });
 
-        map.addLayer({
+      /*  map.addLayer({
             "id": "highlight",
             "type": "symbol",
             "source": "locations",
             "layout": {
-                "icon-image": "marker-15"
+                "icon-image": "weddings/marker-15"
+
             },
             "paint": {
-                "icon-opacity": 1
+                "icon-opacity": 1,
+                "icon-color": "#de1960"
             }
-        });
+        }); */
+        var addmarker = function(marker){
+
+    // create a DOM element for the marker
+    var el = document.createElement('div');
+    el.className = 'marker';
+    var name = marker.properties.name.toLowerCase();
+    console.log("name: "+name);
+    var indexSchloss = name.indexOf("schloss");
+    console.log("schl: "+indexSchloss);
+    var indexHotel =name.indexOf("hotel");
+    console.log("hot. "+indexHotel);
+    var indexRestaurant = name.indexOf("restaurant");
+    console.log("res. "+indexRestaurant);
+    if (indexSchloss != -1){
+    el.style.backgroundImage = "url(schloss1.png)";
+    }
+    else if(indexRestaurant != -1) {
+    el.style.backgroundImage = "url(restaurant1.png)";
+   }
+    else if(indexHotel != -1){
+    el.style.backgroundImage = "url(hotel.png)";
+   }
+   else {
+   el.style.backgroundImage = "url(weddian-logo11.png)";
+   }
+
+    el.style.width ='60px';
+    el.style.height ='54px';
+
+    el.addEventListener('click', function() {
+        window.alert(marker.properties.name);
+    });
+
+    // add marker to map
+    new mapboxgl.Marker(el, {offset: [-30 , -54]})
+        .setLngLat(marker.geometry.coordinates)
+        .addTo(map);
+        }
 
         var popup = null;
 
@@ -326,7 +372,25 @@
 
         }).then(function(locations) {
             var locationIndex = 0;
+            setTimeout(function(){
+              map.flyTo({
+       center: [
+            9.22,
+           49.13],
+       speed: 0.04,
 
+   });
+     },3000);
+            locations.features.sort(function(a,b){
+              var latA = a.geometry.coordinates[1];
+              var latB = b.geometry.coordinates[1];
+              if (latA>latB) {
+                return -1;
+              } else {
+                return 1;
+              }
+            });
+             locations.features.forEach(addmarker);
             var showNextPop = function () {
                 if (popup != null) {
                     popup.remove();
@@ -336,19 +400,21 @@
                     var myLocation = locations.features[locationIndex];
 
                     var locationName = myLocation.properties.name;
+                    var res = locationName.split (",");
+                    console.log (res[0]);
+                    popup = new mapboxgl.Popup({closeOnClick: false, offset:[0,-50]})
 
-                    popup = new mapboxgl.Popup({closeOnClick: false})
                         .setLngLat(myLocation.geometry.coordinates)
-                        .setHTML(locationName)
+                        .setHTML(res[0])
                         .addTo(map);
 
                     locationIndex = locationIndex + 1;
                     if (locations.features.length >= locationIndex) {
-                        setTimeout(showNextPop, 500);
+                        setTimeout(showNextPop, 2000);
                     }
                 }
             };
-            setTimeout(showNextPop, 500);
+            setTimeout(showNextPop, 2000);
         });
 
 
