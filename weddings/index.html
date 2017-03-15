@@ -13,7 +13,6 @@
     <link href="../node_modules/mapbox-gl/dist/mapbox-gl.css" rel="stylesheet"/>
     <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
     <script src="weddingsPerMonth.js"></script>
-    <script src="weddingDates.js"></script>
     <script src="highlightLocations.js"></script>
     <style type="text/css">
         body, html {
@@ -260,35 +259,42 @@
         var ol = document.querySelector('ol.wedding-dates');
         var content = "";
 
-        weddingDates.dates.forEach(function (element) {
-            var timex = element.label.replace(/Fr/gi, "<strong>Freitag</strong>")
-            timex = timex.replace(/Sa/gi, "<strong>Samstag</strong>")
-            var totalWeddings = Math.round(((element.count / weddingDates.total) * 400000) / 100) * 100;
-            var form =new Intl.NumberFormat("de-DE").format(totalWeddings);
-            var formdate = timex.replace(/7/gi, "<strong>7</strong>")
-            content += "<li class='invisible transition'><span>"+formdate+"<br><small>~<strong>"+form+"</strong> Hochzeiten</small></span></li>"
+        fetch(new Request("weddingDates.json")).
+        then(function (response) {
+            return response.json();
 
+        }).then(function(weddingDates) {
+
+            weddingDates.dates.forEach(function (element) {
+                var timex = element.label.replace(/Fr/gi, "<strong>Freitag</strong>")
+                timex = timex.replace(/Sa/gi, "<strong>Samstag</strong>")
+                var totalWeddings = Math.round(((element.count / weddingDates.total) * 400000) / 100) * 100;
+                var form = new Intl.NumberFormat("de-DE").format(totalWeddings);
+                var formdate = timex.replace(/7/gi, "<strong>7</strong>")
+                content += "<li class='invisible transition'><span>" + formdate + "<br><small>~<strong>" + form + "</strong> Hochzeiten</small></span></li>"
+
+            });
+            ol.innerHTML = content;
+
+            var liElements = document.querySelectorAll('.wedding-dates li');
+            var maxIndex = -1;
+            var interval = setInterval(function () {
+                maxIndex++;
+                liElements[maxIndex].style.opacity = 1;
+                if (maxIndex + 1 >= liElements.length) clearInterval(interval);
+            }, 600);
+
+            setTimeout(function () {
+                document.querySelector('.wedding-dates-conclusion').style.opacity = 1;
+            }, 4500);
         });
-        ol.innerHTML = content;
-
-        var liElements = document.querySelectorAll('.wedding-dates li');
-        var maxIndex = -1;
-        var interval = setInterval(function () {
-            maxIndex++;
-            liElements[maxIndex].style.opacity = 1;
-            if (maxIndex + 1 >= liElements.length) clearInterval(interval);
-        }, 600);
-
-        setTimeout(function () {
-            document.querySelector('.wedding-dates-conclusion').style.opacity = 1;
-        }, 4500);
     }
 </script>
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiY29kZWZvcmhlaWxicm9ubiIsImEiOiJaVW1RaEhzIn0.dTT9PWOqjBbzpw7S--GnAA';
     var map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/satellite-v9',
+        style: 'mapbox://styles/mapbox/light-v9',
         center: [9.9167, 51.3167],
         zoom: 5
     });
@@ -297,7 +303,7 @@
         var circleSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
         map.addSource("locations", {
             type: "geojson",
-            data: "weddingLocations.geojson"
+            data: "highlightLocations.geojson"
         });
 
         map.addLayer({
@@ -305,15 +311,53 @@
             "type": "symbol",
             "source": "locations",
             "layout": {
-                "icon-image": "{icon}-15"
+                "icon-image": "marker-15"
             },
             "paint": {
                 "icon-opacity": 1
-            },
-            "filter": ["==", "id", ""]
+            }
         });
 
-        circleSizes.forEach(function (circleSize) {
+        var popup = null;
+
+        fetch(new Request("highlightLocations.geojson")).
+        then(function (response) {
+            return response.json();
+
+        }).then(function(locations) {
+            var locationIndex = 0;
+
+            var showNextPop = function () {
+                if (popup != null) {
+                    popup.remove();
+                }
+
+                if (locations.features.length > locationIndex) {
+                    var myLocation = locations.features[locationIndex];
+
+                    var locationName = myLocation.properties.name;
+
+                    popup = new mapboxgl.Popup({closeOnClick: false})
+                        .setLngLat(myLocation.geometry.coordinates)
+                        .setHTML(locationName)
+                        .addTo(map);
+
+                    locationIndex = locationIndex + 1;
+                    if (locations.features.length >= locationIndex) {
+                        setTimeout(showNextPop, 500);
+                    }
+                }
+            };
+            setTimeout(showNextPop, 500);
+        });
+
+
+
+
+
+
+
+        /*circleSizes.forEach(function (circleSize) {
             map.addLayer({
                 "id": "cluster-locations-" + circleSize,
                 "type": "circle",
@@ -356,7 +400,7 @@
         setTimeout(function () {
             playback(0);
         }, 4000);
-
+*/
         setTimeout(function () {
             document.getElementById('map').style.opacity = 1;
         }, 300);
@@ -387,7 +431,7 @@
             {
                 delay: 1000,
                 fn: renderPerMonthChart
-            },*/
+            },
             {
                 slide: 2,
                 delay: 1000
@@ -395,15 +439,15 @@
             {
                 delay: 1000,
                 fn: renderPerDateChart
-            }/*,
+            },*/
             {
                 slide: 3,
-                delay: 8000
+                delay: 100
             },
             {
                 delay: 1000,
                 fn: renderMap
-            }*/
+            }
         ];
         var delaySum = 0;
         timing.forEach(function (entry) {
