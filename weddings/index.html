@@ -171,8 +171,7 @@
             <div class="flex-auto"
                  style="width: 100%;position: relative;display: flex; flex-direction: column;padding-bottom:3rem;">
                 <div id="map" class="flex-auto transition invisible" style="width: 100%;"></div>
-                <div class='map-overlay-container'>
-                    <div class='map-overlay'>
+
                         <h2 id='location-title'></h2>
                         <p id='location-description'></p>
                     </div>
@@ -304,6 +303,17 @@
         center: [9.9167, 53.3167],
         zoom: 6
     });
+    map.on("load",function(){
+      map.setLayoutProperty('country-label-lg', 'text-field', '{name_de}');
+      map.setLayoutProperty('country-label-md', 'text-field', '{name_de}');
+      map.setLayoutProperty('country-label-sm', 'text-field', '{name_de}');
+      map.setLayoutProperty('place-city-lg-n', 'text-field', '{name_de}');
+      map.setLayoutProperty('place-city-lg-s', 'text-field', '{name_de}');
+      map.setLayoutProperty('place-city-md-n', 'text-field', '{name_de}');
+      map.setLayoutProperty('place-city-md-s', 'text-field', '{name_de}');
+      map.setLayoutProperty('place-city-sm', 'text-field', '{name_de}');
+      console.log("geladen");
+    })
 
     var renderMap = function () {
         var circleSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
@@ -377,7 +387,7 @@
        center: [
             9.22,
            49.13],
-       speed: 0.04,
+       speed: 0.025,
 
    });
      },3000);
@@ -423,7 +433,7 @@
 
 
 
-        /*circleSizes.forEach(function (circleSize) {
+          /*circleSizes.forEach(function (circleSize) {
             map.addLayer({
                 "id": "cluster-locations-" + circleSize,
                 "type": "circle",
@@ -489,8 +499,8 @@
 //        map.on('load', renderMap);
 
 
-        var timing = [
-            /*{
+       var timing = [
+             {
                 slide: 1,
                 delay: 3000
             },
@@ -500,18 +510,18 @@
             },
             {
                 slide: 2,
-                delay: 1000
+                delay: 18000
             },
             {
-                delay: 1000,
+                delay: 2000,
                 fn: renderPerDateChart
-            },*/
+            },
             {
                 slide: 3,
-                delay: 100
+                delay: 10000
             },
             {
-                delay: 1000,
+                delay: 2000,
                 fn: renderMap
             }
         ];
